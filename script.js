@@ -28,7 +28,7 @@ class Board {
     for (let i = 0; i < m; i++) {
       let row = [];
       for (let j = 0; j < m; j++) {
-        row.push(new Tile(i, j, false, size));
+        row.push(new Tile(i, j, false, this));
       }
       grid.push(row);
     }
@@ -38,6 +38,8 @@ class Board {
     // }
 
     grid[0][0].isBomb = true;
+    grid[1][1].isBomb = true;
+    grid[2][0].isBomb = true;
 
     return grid;
   }
@@ -53,22 +55,33 @@ class Board {
     }
   }
 
+  displayBoard() {
+    let m = this.grid.length;
+    for (let i = 0; i < m; i++) {
+      let res = '';
+      for (let j = 0; j < m; j++) {
+        res += this.grid[i][j].display + ' ';
+      }
+      console.log(res);
+    }
+  }
+
   placeTiles() {}
 
   isGameOver() {}
 }
 
 class Tile {
-  constructor(r, c, isBomb, size) {
+  constructor(r, c, isBomb, board) {
     this.r = r;
     this.c = c;
     this.isBomb = isBomb;
-    this.display = '_';
-    this.boardSize = size;
+    this.display = '*';
+    this.board = board;
   }
 
   getNeighborCoordinates(startR, startC) {
-    let m = Math.sqrt(this.boardSize);
+    let m = Math.sqrt(this.board.size);
     let neighborCoordinates = [];
     const dirs = [-1, 0, 1];
     for (let i = 0; i < dirs.length; i++) {
@@ -89,7 +102,16 @@ class Tile {
 
   getBombCountOfNeighbors() {
     let neighbors = this.getNeighborCoordinates(this.r, this.c);
-    // console.log(object);
+    let bombCt = 0;
+    for (let n in neighbors) {
+      console.log(neighbors[n]);
+      const [r, c] = neighbors[n];
+      console.log(r, c);
+      if (this.board.grid[r][c].isBomb) {
+        bombCt++;
+      }
+    }
+    return bombCt;
   }
 
   onClickContinueGame() {
@@ -105,7 +127,9 @@ class Tile {
 class GameManager {}
 
 const board = new Board(9, 5);
-console.log(JSON.stringify(board));
+// console.log(JSON.stringify(board));
+console.log(board);
+board.displayBoard();
 
 const tile = board.grid[1][1];
 console.log(tile);
@@ -116,5 +140,8 @@ console.log(JSON.stringify(tile.getNeighborCoordinates(0, 0)));
 console.log(JSON.stringify(tile.getNeighborCoordinates(1, 1)));
 console.log(JSON.stringify(tile.getNeighborCoordinates(2, 1)));
 // board.clickOnBoard(0, 0);
-console.log(board.clickOnBoard(1, 0));
-console.log(board.clickOnBoard(0, 0));
+board.clickOnBoard(1, 0);
+board.displayBoard();
+// console.log(JSON.stringify(board));
+// board.clickOnBoard(0, 0);
+// board.displayBoard();
