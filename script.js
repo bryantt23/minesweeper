@@ -105,9 +105,10 @@ class Board {
       console.log(true);
       this.displayBoardCheat();
       return true;
+    } else {
+      console.log(false);
+      return false;
     }
-    console.log(false);
-    return false;
   }
 }
 
@@ -140,34 +141,54 @@ class Tile {
 
   clickNeighbors(startR, startC) {}
 
-  getBombCountOfNeighbors(neighbors) {
-    let bombCt = 0;
-    for (let n in neighbors) {
-      console.log(neighbors[n]);
-      const [r, c] = neighbors[n];
-      console.log(r, c);
-      if (this.board.grid[r][c].isBomb) {
-        bombCt++;
-      }
-    }
-    return bombCt;
+  // getBombCountOfNeighbors(neighbors) {
+  //   let bombCt = 0;
+  //   for (let n in neighbors) {
+  //     console.log(neighbors[n]);
+  //     const [r, c] = neighbors[n];
+  //     console.log(r, c);
+  //     if (this.board.grid[r][c].isBomb) {
+  //       bombCt++;
+  //     }
+  //   }
+  //   return bombCt;
+  // }
+
+  getBombCountOfNeighbors(r, c) {
+    return (
+      this.hasBomb(r + 1, c) +
+      this.hasBomb(r, c + 1) +
+      this.hasBomb(r - 1, c) +
+      this.hasBomb(r, c - 1)
+    );
+  }
+
+  hasBomb(r, c) {
+    let m = Math.sqrt(this.board.size);
+    if (c < 0 || c === m || r < 0 || r === m) return 0;
+
+    return this.board.grid[r][c].isBomb ? 1 : 0;
   }
 
   expandRecursively(r, c) {
-    console.log(r, c);
+    // console.log(r, c);
     //base case
     let m = Math.sqrt(this.board.size);
+    if (c < 0 || c === m || r < 0 || r === m) return;
     if (this.board.grid[r][c].isBomb) return;
     if (this.board.grid[r][c].display !== '*') return;
-    if (c < 0 || c === m || r < 0 || r === m) return;
-    let neighbors = this.getNeighborCoordinates(r, c);
-    this.board.grid[r][c].display = this.getBombCountOfNeighbors(neighbors);
+    // let neighbors = this.getNeighborCoordinates(r, c);
+    this.board.grid[r][c].display = this.getBombCountOfNeighbors(r, c);
     // debugger;
-    for (let n in neighbors) {
-      console.log(neighbors[n]);
-      const [rr, cc] = neighbors[n];
-      this.expandRecursively(rr, cc);
-    }
+    // for (let n in neighbors) {
+    //   console.log(neighbors[n]);
+    //   const [rr, cc] = neighbors[n];
+    //   this.expandRecursively(rr, cc);
+    // }
+    this.expandRecursively(r + 1, c);
+    this.expandRecursively(r, c + 1);
+    this.expandRecursively(r - 1, c);
+    this.expandRecursively(r, c - 1);
   }
 
   onClickContinueGame() {
@@ -238,5 +259,5 @@ board.isTheGameOver();
 // board.displayBoard();
 */
 
-const game = new GameManager(9, 3);
+const game = new GameManager(25, 10);
 game.start();
