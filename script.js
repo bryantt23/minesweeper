@@ -27,7 +27,7 @@ class Board {
     for (let i = 0; i < m; i++) {
       let row = [];
       for (let j = 0; j < m; j++) {
-        row.push(new Tile(i, j, false));
+        row.push(new Tile(i, j, false, size));
       }
       grid.push(row);
     }
@@ -45,17 +45,43 @@ class Board {
 }
 
 class Tile {
-  constructor(r, c, isBomb) {
+  constructor(r, c, isBomb, size) {
     this.r = r;
     this.c = c;
     this.isBomb = isBomb;
+    this.display = '_';
+    this.boardSize = size;
   }
 
-  clickNeighbors() {}
-
-  onTileClick() {
-    if (this.isBomb) {
+  getNeighborCoordinates(startR, startC) {
+    let m = Math.sqrt(this.boardSize);
+    let neighborCoordinates = [];
+    const dirs = [-1, 0, 1];
+    for (let i = 0; i < dirs.length; i++) {
+      for (let j = 0; j < dirs.length; j++) {
+        const r = dirs[i],
+          c = dirs[j];
+        const nextR = startR + r,
+          nextC = startC + c;
+        if (nextR === startR && nextC === startC) continue;
+        if (nextC < 0 || nextC === m || nextR < 0 || nextR === m) continue;
+        neighborCoordinates.push([nextR, nextC]);
+      }
     }
+    return neighborCoordinates;
+  }
+
+  clickNeighbors(startR, startC) {}
+
+  getBombCountOfNeighbors() {}
+
+  onClickContinueGame() {
+    if (this.isBomb) {
+      this.display = 'X';
+      return false;
+    }
+    this.display = this.clickNeighbors();
+    return true;
   }
 }
 
@@ -63,3 +89,12 @@ class GameManager {}
 
 const board = new Board(9, 5);
 console.log(JSON.stringify(board));
+
+const tile = board.grid[1][1];
+console.log(tile);
+// t.getNeighborCoordinates(0, 0);
+console.log(tile.getNeighborCoordinates(0, 0));
+console.log(JSON.stringify(tile.getNeighborCoordinates(0, 0)));
+
+console.log(JSON.stringify(tile.getNeighborCoordinates(1, 1)));
+console.log(JSON.stringify(tile.getNeighborCoordinates(2, 1)));
