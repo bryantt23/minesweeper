@@ -33,13 +33,13 @@ class Board {
       grid.push(row);
     }
 
-    // while (this.bombsAdded < this.bombCount) {
-    //   this.addBomb(grid);
-    // }
+    while (this.bombsAdded < this.bombCount) {
+      this.addBomb(grid);
+    }
 
-    grid[0][0].isBomb = true;
+    // grid[0][0].isBomb = true;
     // grid[1][1].isBomb = true;
-    grid[2][0].isBomb = true;
+    // grid[2][0].isBomb = true;
 
     return grid;
   }
@@ -50,7 +50,7 @@ class Board {
     if (res) {
       console.log('game continues');
     } else {
-      console.log('game over');
+      console.log('Game Over');
       this.isGameLost = true;
     }
   }
@@ -81,25 +81,32 @@ class Board {
 
   isGameWon() {
     let m = this.grid.length;
-    let hiddenBombs = 0;
+    let nonBombsDisplayed = 0;
     for (let i = 0; i < m; i++) {
       for (let j = 0; j < m; j++) {
         const grid = this.grid[i][j];
-        if (grid.isBomb && grid.display === '*') {
-          hiddenBombs++;
+        if (grid.display !== '*') {
+          nonBombsDisplayed++;
         }
       }
     }
     console.log(this);
-    console.log(hiddenBombs);
-    return hiddenBombs === this.bombCount;
+    const win = nonBombsDisplayed === this.size - this.bombCount;
+    if (win) {
+      console.log('You win!');
+    }
+    return win;
   }
 
   //is game won, is game lost
   isTheGameOver() {
+    // debugger;
     if (this.isGameWon() || this.isGameLost) {
+      console.log(true);
+      this.displayBoardCheat();
       return true;
     }
+    console.log(false);
     return false;
   }
 }
@@ -116,7 +123,7 @@ class Tile {
   getNeighborCoordinates(startR, startC) {
     let m = Math.sqrt(this.board.size);
     let neighborCoordinates = [];
-    const dirs = [-1, 0, 1];
+    const dirs = [-1, 1];
     for (let i = 0; i < dirs.length; i++) {
       for (let j = 0; j < dirs.length; j++) {
         const r = dirs[i],
