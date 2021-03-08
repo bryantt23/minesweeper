@@ -38,7 +38,7 @@ class Board {
     // }
 
     grid[0][0].isBomb = true;
-    grid[1][1].isBomb = true;
+    // grid[1][1].isBomb = true;
     grid[2][0].isBomb = true;
 
     return grid;
@@ -100,8 +100,7 @@ class Tile {
 
   clickNeighbors(startR, startC) {}
 
-  getBombCountOfNeighbors() {
-    let neighbors = this.getNeighborCoordinates(this.r, this.c);
+  getBombCountOfNeighbors(neighbors) {
     let bombCt = 0;
     for (let n in neighbors) {
       console.log(neighbors[n]);
@@ -114,12 +113,34 @@ class Tile {
     return bombCt;
   }
 
+  expandRecursively(r, c) {
+    console.log(r, c);
+    //base case
+    let m = Math.sqrt(this.board.size);
+    if (this.board.grid[r][c].isBomb) return;
+    if (this.board.grid[r][c].display !== '*') return;
+    if (c < 0 || c === m || r < 0 || r === m) return;
+    let neighbors = this.getNeighborCoordinates(r, c);
+    this.board.grid[r][c].display = this.getBombCountOfNeighbors(neighbors);
+    // debugger;
+    for (let n in neighbors) {
+      console.log(neighbors[n]);
+      const [rr, cc] = neighbors[n];
+      this.expandRecursively(rr, cc);
+    }
+  }
+
   onClickContinueGame() {
     if (this.isBomb) {
       this.display = 'X';
       return false;
     }
-    this.display = this.getBombCountOfNeighbors();
+    // let neighbors = this.getNeighborCoordinates(this.r, this.c);
+    // this.display = this.getBombCountOfNeighbors(neighbors);
+
+    // debugger;
+    this.expandRecursively(this.r, this.c);
+
     return true;
   }
 }
@@ -135,10 +156,10 @@ const tile = board.grid[1][1];
 console.log(tile);
 // t.getNeighborCoordinates(0, 0);
 console.log(tile.getNeighborCoordinates(0, 0));
-console.log(JSON.stringify(tile.getNeighborCoordinates(0, 0)));
+// console.log(JSON.stringify(tile.getNeighborCoordinates(0, 0)));
 
-console.log(JSON.stringify(tile.getNeighborCoordinates(1, 1)));
-console.log(JSON.stringify(tile.getNeighborCoordinates(2, 1)));
+// console.log(JSON.stringify(tile.getNeighborCoordinates(1, 1)));
+// console.log(JSON.stringify(tile.getNeighborCoordinates(2, 1)));
 // board.clickOnBoard(0, 0);
 board.clickOnBoard(1, 0);
 board.displayBoard();
