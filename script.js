@@ -37,10 +37,6 @@ class Board {
       this.addBomb(grid);
     }
 
-    // grid[0][0].isBomb = true;
-    // grid[1][1].isBomb = true;
-    // grid[2][0].isBomb = true;
-
     return grid;
   }
 
@@ -100,7 +96,6 @@ class Board {
 
   //is game won, is game lost
   isTheGameOver() {
-    // debugger;
     if (this.isGameWon() || this.isGameLost) {
       console.log(true);
       this.displayBoardCheat();
@@ -120,39 +115,6 @@ class Tile {
     this.display = '*';
     this.board = board;
   }
-
-  getNeighborCoordinates(startR, startC) {
-    let m = Math.sqrt(this.board.size);
-    let neighborCoordinates = [];
-    const dirs = [-1, 1];
-    for (let i = 0; i < dirs.length; i++) {
-      for (let j = 0; j < dirs.length; j++) {
-        const r = dirs[i],
-          c = dirs[j];
-        const nextR = startR + r,
-          nextC = startC + c;
-        if (nextR === startR && nextC === startC) continue;
-        if (nextC < 0 || nextC === m || nextR < 0 || nextR === m) continue;
-        neighborCoordinates.push([nextR, nextC]);
-      }
-    }
-    return neighborCoordinates;
-  }
-
-  clickNeighbors(startR, startC) {}
-
-  // getBombCountOfNeighbors(neighbors) {
-  //   let bombCt = 0;
-  //   for (let n in neighbors) {
-  //     console.log(neighbors[n]);
-  //     const [r, c] = neighbors[n];
-  //     console.log(r, c);
-  //     if (this.board.grid[r][c].isBomb) {
-  //       bombCt++;
-  //     }
-  //   }
-  //   return bombCt;
-  // }
 
   getBombCountOfNeighbors(r, c) {
     return (
@@ -177,14 +139,7 @@ class Tile {
     if (c < 0 || c === m || r < 0 || r === m) return;
     if (this.board.grid[r][c].isBomb) return;
     if (this.board.grid[r][c].display !== '*') return;
-    // let neighbors = this.getNeighborCoordinates(r, c);
     this.board.grid[r][c].display = this.getBombCountOfNeighbors(r, c);
-    // debugger;
-    // for (let n in neighbors) {
-    //   console.log(neighbors[n]);
-    //   const [rr, cc] = neighbors[n];
-    //   this.expandRecursively(rr, cc);
-    // }
     this.expandRecursively(r + 1, c);
     this.expandRecursively(r, c + 1);
     this.expandRecursively(r - 1, c);
@@ -196,12 +151,8 @@ class Tile {
       this.display = 'X';
       return false;
     }
-    // let neighbors = this.getNeighborCoordinates(this.r, this.c);
-    // this.display = this.getBombCountOfNeighbors(neighbors);
 
-    // debugger;
     this.expandRecursively(this.r, this.c);
-
     return true;
   }
 }
@@ -213,17 +164,13 @@ class GameManager {
 
   start() {
     this.board.displayBoardCheat();
+    this.board.displayBoard();
     while (!this.board.isTheGameOver()) {
       this.getInput();
     }
   }
 
   getInput() {
-    console.log(this.board);
-    console.log(this.board.grid);
-    // console.log(JSON.stringify(this.board.grid));
-
-    this.board.displayBoard();
     const input = prompt('Enter a coordinate');
     if (!input) {
       throw new Error('exiting');
