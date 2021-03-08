@@ -9,6 +9,7 @@ class Board {
     this.bombCount = bombCount;
     this.bombsAdded = 0;
     this.grid = this.buildGrid(size);
+    this.isGameOver = false;
   }
 
   addBomb(grid) {
@@ -32,11 +33,24 @@ class Board {
       grid.push(row);
     }
 
-    while (this.bombsAdded < this.bombCount) {
-      this.addBomb(grid);
-    }
+    // while (this.bombsAdded < this.bombCount) {
+    //   this.addBomb(grid);
+    // }
+
+    grid[0][0].isBomb = true;
 
     return grid;
+  }
+
+  clickOnBoard(r, c) {
+    const res = this.grid[r][c].onClickContinueGame();
+    console.log(res);
+    if (res) {
+      console.log('game continues');
+    } else {
+      console.log('game over');
+      this.isGameOver = true;
+    }
   }
 
   placeTiles() {}
@@ -73,14 +87,17 @@ class Tile {
 
   clickNeighbors(startR, startC) {}
 
-  getBombCountOfNeighbors() {}
+  getBombCountOfNeighbors() {
+    let neighbors = this.getNeighborCoordinates(this.r, this.c);
+    // console.log(object);
+  }
 
   onClickContinueGame() {
     if (this.isBomb) {
       this.display = 'X';
       return false;
     }
-    this.display = this.clickNeighbors();
+    this.display = this.getBombCountOfNeighbors();
     return true;
   }
 }
@@ -98,3 +115,6 @@ console.log(JSON.stringify(tile.getNeighborCoordinates(0, 0)));
 
 console.log(JSON.stringify(tile.getNeighborCoordinates(1, 1)));
 console.log(JSON.stringify(tile.getNeighborCoordinates(2, 1)));
+// board.clickOnBoard(0, 0);
+console.log(board.clickOnBoard(1, 0));
+console.log(board.clickOnBoard(0, 0));
