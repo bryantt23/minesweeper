@@ -9,7 +9,7 @@ class Board {
     this.bombCount = bombCount;
     this.bombsAdded = 0;
     this.grid = this.buildGrid(size);
-    this.isGameOver = false;
+    this.isGameLost = false;
   }
 
   addBomb(grid) {
@@ -51,7 +51,18 @@ class Board {
       console.log('game continues');
     } else {
       console.log('game over');
-      this.isGameOver = true;
+      this.isGameLost = true;
+    }
+  }
+
+  displayBoardCheat() {
+    let m = this.grid.length;
+    for (let i = 0; i < m; i++) {
+      let res = '';
+      for (let j = 0; j < m; j++) {
+        res += this.grid[i][j].isBomb ? 'B ' : '_ ';
+      }
+      console.log(res);
     }
   }
 
@@ -68,7 +79,29 @@ class Board {
 
   placeTiles() {}
 
-  isGameOver() {}
+  isGameWon() {
+    let m = this.grid.length;
+    let hiddenBombs = 0;
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < m; j++) {
+        const grid = this.grid[i][j];
+        if (grid.isBomb && grid.display === '*') {
+          hiddenBombs++;
+        }
+      }
+    }
+    console.log(this);
+    console.log(hiddenBombs);
+    return hiddenBombs === this.bombCount;
+  }
+
+  //is game won, is game lost
+  isTheGameOver() {
+    if (this.isGameWon() || this.isGameLost) {
+      return true;
+    }
+    return false;
+  }
 }
 
 class Tile {
@@ -145,9 +178,37 @@ class Tile {
   }
 }
 
-class GameManager {}
+class GameManager {
+  constructor(size, bombsCount) {
+    this.board = new Board(size, bombsCount);
+  }
 
-const board = new Board(9, 5);
+  start() {
+    this.board.displayBoardCheat();
+    while (!this.board.isTheGameOver()) {
+      this.getInput();
+    }
+  }
+
+  getInput() {
+    console.log(this.board);
+    console.log(this.board.grid);
+    // console.log(JSON.stringify(this.board.grid));
+
+    this.board.displayBoard();
+    const input = prompt('Enter a coordinate');
+    if (!input) {
+      throw new Error('exiting');
+    }
+    const [r, c] = input.split(' ');
+    this.board.clickOnBoard(r, c);
+    this.board.displayBoard();
+    console.log(this.board);
+  }
+}
+
+/*
+const board = new Board(9, 3);
 // console.log(JSON.stringify(board));
 console.log(board);
 board.displayBoard();
@@ -163,6 +224,12 @@ console.log(tile.getNeighborCoordinates(0, 0));
 // board.clickOnBoard(0, 0);
 board.clickOnBoard(1, 0);
 board.displayBoard();
+console.log(board.isTheGameOver());
+board.isTheGameOver();
 // console.log(JSON.stringify(board));
 // board.clickOnBoard(0, 0);
 // board.displayBoard();
+*/
+
+const game = new GameManager(9, 3);
+game.start();
